@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Student = require("../models/student");
 const Teacher = require("../models/teachers");
 const Notice = require("../models/notice");
+const Subject = require("../models/subject");
 exports.dummyAdmin = async (req, res) => {
     try {
         const { email, password, name, username, role} = req.body;
@@ -124,3 +125,82 @@ exports.addNotice = async (req, res) => {
         });
     }
 };
+
+exports.getNotice = async (req, res) => {
+    try {
+        const notices = await Notice.find({});
+        res.status(200).json({ success: true, notices });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to fetch notices', error: error.message });
+    }
+};
+
+exports.addSubject = async (req, res) => {
+    try {
+        const { subName, subCode, year, department, totalLectures } = req.body;
+        
+        // Check if the subject already exists
+        const existingSubject = await Subject.findOne({ subjectCode: subCode });
+        if (existingSubject) {
+            return res.status(400).json({ success: false, message: 'Given subject is already added' });
+        }
+
+        // Create a new subject
+        const newSubject = new Subject({
+            totalLectures,
+            department,
+            subjectCode: subCode,
+            subjectName: subName,
+            year,
+        });
+
+        // Save the new subject to the database
+        await newSubject.save();
+
+        // Find students in the specified department and year
+        const students = await Student.find({ department, year });
+        if (students.length > 0) {
+            // Add the new subject to each student's list of subjects
+            for (let student of students) {
+                student.subjects.push(newSubject._id);
+                await student.save();
+            }
+        }
+
+        // Respond with success
+        return res.status(200).json({
+            success: true,
+            message: 'Subject added successfully',
+            response: newSubject,
+        });
+    } catch (error) {
+        // Handle any errors and respond with error message
+        return res.status(500).json({
+            success: false,
+            message: 'Failed to add subject',
+            error: error.message,
+        });
+    }
+};
+
+export const getSubject = async (req, res) => {
+    try {
+        const { department, year } = req.body;
+
+        // Query subjects based on department and year
+        const subjects = await Subject.find({ department, year });
+
+        // Handle case where no subjects are found
+        if (subjects.length === 0) {
+            return res.status(404).json({ success: false, message: 'No subject found' });
+        }
+
+        // Respond with the found subjects
+        return res.status(200).json({ success: true, result: subjects });
+    } catch (error) {
+        // Handle any errors and respond with an error message
+        return res.status(500).json({ success: false, message: 'Failed to fetch subjects', error: error.message });
+    }
+};
+  
+  

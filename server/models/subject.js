@@ -18,6 +18,10 @@ const subjectSchema = new mongoose.Schema( {
       attendance : {
             type : ObjectId,
             ref : "attendance"
+      },
+      year : {
+        type : String,
+        required : true
       }
     
 })
