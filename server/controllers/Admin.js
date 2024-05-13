@@ -5,6 +5,8 @@ const Student = require("../models/student");
 const Teacher = require("../models/teachers");
 const Notice = require("../models/notice");
 const Subject = require("../models/subject");
+const Department = require("../models/department");
+
 exports.dummyAdmin = async (req, res) => {
     try {
         const { email, password, name, username, role} = req.body;
@@ -55,7 +57,7 @@ exports.login = async (req, res) => {
 
 exports.addStudents = async (req, res) => {
     try {
-        const { email, password, name, department, section } = req.body;
+        const { email, password, name, department, section, year } = req.body;
         if (!email || !password || !name || !department || !section) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
@@ -64,7 +66,7 @@ exports.addStudents = async (req, res) => {
             return res.status(400).json({ success: false, message: "User already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newStudent = new Student({ email, password: hashedPassword, name, role : "student",department, section,  });
+        const newStudent = new Student({ email, password: hashedPassword, name, role : "student",department, section, year});
         await newStudent.save();
         return res.status(201).json({ success: true, message: "User registered successfully" });
     } catch (error) {
@@ -137,21 +139,20 @@ exports.getNotice = async (req, res) => {
 
 exports.addSubject = async (req, res) => {
     try {
-        const { subName, subCode, year, department, totalLectures } = req.body;
+        const { name, subjectCode, department, year } = req.body;
         
         // Check if the subject already exists
-        const existingSubject = await Subject.findOne({ subjectCode: subCode });
+        const existingSubject = await Subject.findOne({ subjectCode });
         if (existingSubject) {
             return res.status(400).json({ success: false, message: 'Given subject is already added' });
         }
 
         // Create a new subject
         const newSubject = new Subject({
-            totalLectures,
+            name,
+            subjectCode,
             department,
-            subjectCode: subCode,
-            subjectName: subName,
-            year,
+            year
         });
 
         // Save the new subject to the database
@@ -183,7 +184,7 @@ exports.addSubject = async (req, res) => {
     }
 };
 
-export const getSubject = async (req, res) => {
+exports.getSubject = async (req, res) => {
     try {
         const { department, year } = req.body;
 
@@ -202,5 +203,95 @@ export const getSubject = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Failed to fetch subjects', error: error.message });
     }
 };
-  
-  
+
+exports.addDepartment = async (req, res) => {
+    try {
+        const { department, code } = req.body;
+
+        // Check if the department already exists
+        const existingDepartment = await Department.findOne({ department });
+        if (existingDepartment) {
+            return res.status(400).json({ departmentError: "Department already exists" });
+        }
+
+        // Check if the code already exists
+        const existingCode = await Department.findOne({ code });
+        if (existingCode) {
+            return res.status(400).json({ codeError: "Department code already exists" });
+        }
+
+        // Create new department
+        const newDepartment = await Department.create({ department, code });
+
+        // Return success response
+        return res.status(201).json({
+            success: true,
+            message: "Department added successfully",
+            department: newDepartment,
+        });
+    } catch (error) {
+        // Handle errors
+        console.error("Error adding department:", error);
+        return res.status(500).json({ backendError: "An error occurred while adding the department" });
+    }
+};
+
+exports.deleteAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await User.findByIdAndDelete(id);
+        return res.status(200).json({ success: true, message: "Admin user deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+exports.deleteStudent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Student.findByIdAndDelete(id);
+        return res.status(200).json({ success: true, message: "Student deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+exports.deleteTeacher = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Teacher.findByIdAndDelete(id);
+        return res.status(200).json({ success: true, message: "Teacher deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+exports.deleteNotice = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Notice.findByIdAndDelete(id);
+        return res.status(200).json({ success: true, message: "Notice deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+exports.deleteSubject = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Subject.findByIdAndDelete(id);
+        return res.status(200).json({ success: true, message: "Subject deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+exports.deleteDepartment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await Department.findByIdAndDelete(id);
+        return res.status(200).json({ success: true, message: "Department deleted successfully" });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};

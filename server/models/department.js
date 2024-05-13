@@ -13,4 +13,4 @@ const departmentSchema = mongoose.Schema({
   
 });
 
-module.exports = mongoose.model("department", department);
+module.exports = mongoose.model("department", departmentSchema);

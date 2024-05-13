@@ -34,9 +34,6 @@ const studentSchema = new Schema({
         type : String,
         required : true
     },
-    image: {
-        type: String,
-    },
     subjects: [
         {
             type: ObjectId, 
