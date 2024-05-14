@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/admin");
 const jwt = require("jsonwebtoken");
 const Student = require("../models/student");
-const Teacher = require("../models/teachers");
+const Teacher = require("../models/faculty");
 const Notice = require("../models/notice");
 const Subject = require("../models/subject");
 const Department = require("../models/department");
@@ -66,7 +66,7 @@ exports.addStudents = async (req, res) => {
             return res.status(400).json({ success: false, message: "User already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newStudent = new Student({ email, password: hashedPassword, name, role : "student",department, section, year});
+        const newStudent = new Student({ email, password: hashedPassword, name, role : "Student",department, section, year});
         await newStudent.save();
         return res.status(201).json({ success: true, message: "User registered successfully" });
     } catch (error) {
@@ -76,8 +76,8 @@ exports.addStudents = async (req, res) => {
 
 exports.addTeachers = async (req, res) => {
     try {
-        const { email, password, name, subject, section } = req.body;
-        if (!email || !password || !name || !subject || !section) {
+        const { name, email, password, subject, department } = req.body;
+        if (!email || !password || !name || !subject || !department) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
         const existingUser = await Teacher.findOne({ email });
@@ -85,11 +85,11 @@ exports.addTeachers = async (req, res) => {
             return res.status(400).json({ success: false, message: "User already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newTeacher = new Teacher({ email, password: hashedPassword, name, role : "teacher", subject, section });
+        const newTeacher = new Teacher({ name, email, password: hashedPassword, role : "Faculty", subject, department });
         await newTeacher.save();
         return res.status(201).json({ success: true, message: "User registered successfully" });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "Server error" });
+        return res.status(500).json({ success: false, message: "Server error"});
     }
 };
 
@@ -295,3 +295,21 @@ exports.deleteDepartment = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error" });
     }
 };
+
+exports.getAllSubject = async (req, res) => {
+    try {
+      const subjects = await Subject.find();
+      res.status(200).json(subjects);
+    } catch (error) {
+      console.log("Backend Error", error);
+    }
+  };
+
+exports.getAllStudent = async (req, res) => {
+    try {
+      const students = await Student.find();
+      res.status(200).json(students);
+    } catch (error) {
+      console.log("Backend Error", error);
+    }
+  };

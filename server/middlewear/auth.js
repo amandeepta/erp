@@ -69,3 +69,21 @@ exports.isAdmin = (req, res, next) => {
         })
     }
 }
+
+exports.isFaculty = (req, res, next) => {
+    try {
+        if (req.user.role !== "Faculty") {
+            return res.status(401).json({
+                success: false,
+                message: "This is a protect route for Admins,you can not access it"
+            })
+        }
+        next();
+    }
+    catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "User Role is not Matching"
+        })
+    }
+}

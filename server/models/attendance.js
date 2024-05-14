@@ -1,14 +1,23 @@
 const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Schema.Types;
 
 const attendanceSchema = new mongoose.Schema( {
     student: {
-        type: Schema.Types.ObjectId,
+        type: ObjectId,
         ref: "student",
       },
       subject: {
-        type: Schema.Types.ObjectId,
+        type: ObjectId,
         ref: "subject",
       },
+      totalLectures : {
+        type : Number,
+        default : 0
+      },
+      lecturesAttended : {
+        type : Number, 
+        default : 0,
+      }
     
 })
 

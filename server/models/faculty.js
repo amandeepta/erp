@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const teacherSchema = new mongoose.Schema( {
     name : {
         type : String,
@@ -17,14 +16,16 @@ const teacherSchema = new mongoose.Schema( {
     },
     role : {
         type : String,
+        default : "Faculty"
     },
     subject : {
         type : String, 
         required : true,
     },
-    section : {
-        type : String,
+    department : {
+        type : String, 
         required : true,
+        
     }
     
 })
