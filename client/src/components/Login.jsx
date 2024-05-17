@@ -1,38 +1,47 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthProvider';
+import axios from 'axios';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('Submitted:', { username, password });
     try {
       const response = await axios.post('http://localhost:4000/login', {
-        username,
-        password
-      });
+        email: username,
+        password: password,
+      }, { withCredentials: true });
 
-      if (response.data.role === "Student") {
-        navigate("/");
-      } else if (response.data.role === "Admin") {
-        navigate("/admin");
+      const { token, role, data} = response.data;
+      login(token, role, data);
+
+      if (role === 'Admin') {
+        navigate('/admin');
+      } else if (role === 'Student') {
+        navigate('/student');
+      } else if (role === 'Faculty') {
+        navigate('/faculty');
       } else {
-        navigate("/");
+        navigate('/');
       }
-      console.log('Login successful:', response.data);
-      window.location.reload();
+
     } catch (error) {
+      setError('Wrong Password or Username');
       console.error('Login failed:', error.message);
+
     }
   };
 
   return (
     <div>
       <h2>Login</h2>
+      {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username:</label>

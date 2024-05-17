@@ -12,7 +12,10 @@ const Faculty = require("./routes/facultyRoutes");
 const Student = require("./routes/studentRoutes");
 const Login = require("./routes/loginRoutes");
 
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+  }));
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());

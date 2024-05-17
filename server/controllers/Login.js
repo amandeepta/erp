@@ -6,7 +6,7 @@ const Teacher = require("../models/faculty");
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password } = req.body || req.headers;
         if (!email || !password) {
             return res.status(400).json({ success: false, message: "Email and password are required" });
         }
