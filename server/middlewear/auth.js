@@ -23,6 +23,7 @@ exports.auth = async (req, res, next) => {
         console.log(token);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded; 
+        req.email = decoded.email;
         next();
     } catch (error) {
         

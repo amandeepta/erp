@@ -7,6 +7,30 @@ const Notice = require("../models/notice");
 const Subject = require("../models/subject");
 const Department = require("../models/department");
 
+exports.getinfo = async (req, res) => {
+    try {
+        const username = req.email;
+        if (!username) {
+            return res.status(400).json({ error: 'Username is required' });
+        }
+        const user = await User.findOne({ email: username });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({
+            success: true,
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+        });
+    } catch (error) {
+        console.error('Error fetching user information:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    
+};
+
 exports.dummyAdmin = async (req, res) => {
     try {
         const { email, password, name, username, role} = req.body;

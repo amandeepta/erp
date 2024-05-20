@@ -16,9 +16,11 @@ const {
     deleteTeacher,
     deleteNotice,
     deleteSubject,
-    deleteDepartment
+    deleteDepartment,
+    getinfo
 } = require("../controllers/Admin");
 
+router.get("/info",auth, isAdmin, getinfo);
 router.post("/dummy", dummyAdmin);
 router.post("/login", login);
 router.post("/addStudents", auth, isAdmin, addStudents);

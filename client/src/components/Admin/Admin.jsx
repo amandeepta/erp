@@ -1,61 +1,97 @@
-import { useAuth } from '../AuthProvider';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { FaPlus, FaUser, FaUserGraduate, FaUserTie } from 'react-icons/fa';
 
 function Admin() {
-    const { user } = useAuth();
+    const [user, setUser] = useState(null);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const token = localStorage.getItem("authToken");
+                if (!token) throw new Error("No token found");
+                const response = await axios.get("http://localhost:4000/admin/info", {
+                    withCredentials: true
+                });
+                setUser(response.data);
+            } catch (error) {
+                setError("You are not authorized here");
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
+
     const handleCreateNotice = () => {
-        // Navigate to the route for creating a notice
-        navigate('/create-notice');
+        navigate('/createnotice');
     };
 
     const handleAddStudents = () => {
-        // Navigate to the route for adding students
-        navigate('/add-students');
+        navigate('/Student');
     };
 
     const handleAddFaculty = () => {
-        // Navigate to the route for adding faculty
-        navigate('/add-faculty');
+        navigate('/Faculty');
     };
 
     const handleAddAdmin = () => {
-        // Navigate to the route for adding admin
-        navigate('/add-admin');
+        navigate('/addadmin');
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        navigate('/');
+    }
+
     return (
-        <div>
-            {user && user.role === "Admin" && (
-                <div>
-                    <h1>Welcome to the admin dashboard</h1>
-                    <div>
-                        <p>User ID: {user?.data?.id}</p>
-                        <p>User Name: {user?.data?.name}</p>
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+            {user && user.role === "Admin" ? (
+                <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+                    <h1 className="text-2xl font-bold text-center mb-4">Welcome to the Admin Dashboard</h1>
+                    <div className="mb-4">
+                        <p className="text-gray-700"><strong>User ID:</strong> {user.id}</p>
+                        <p className="text-gray-700"><strong>User Name:</strong> {user.name}</p>
                         {/* Render more user data fields as needed */}
                     </div>
-                    <div className="action-buttons">
-                        <button onClick={handleCreateNotice}>
-                            <FaPlus /> Create Notice
+                    <div className="grid grid-cols-1 gap-4 mb-4">
+                        <button
+                            className="flex items-center justify-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                            onClick={handleCreateNotice}
+                        >
+                            <FaPlus className="mr-2" /> Create Notice
                         </button>
-                        <button onClick={handleAddStudents}>
-                            <FaUserGraduate /> Add Students
+                        <button
+                            className="flex items-center justify-center bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+                            onClick={handleAddStudents}
+                        >
+                            <FaUserGraduate className="mr-2" /> Add Students
                         </button>
-                        <button onClick={handleAddFaculty}>
-                            <FaUserTie /> Add Faculty
+                        <button
+                            className="flex items-center justify-center bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+                            onClick={handleAddFaculty}
+                        >
+                            <FaUserTie className="mr-2" /> Add Faculty
                         </button>
-                        <button onClick={handleAddAdmin}>
-                            <FaUser /> Add Admin
+                        <button
+                            className="flex items-center justify-center bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600"
+                            onClick={handleAddAdmin}
+                        >
+                            <FaUser className="mr-2" /> Add Admin
                         </button>
                     </div>
+                    <button
+                        className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                        onClick={handleLogout}
+                    >
+                        Log Out
+                    </button>
                 </div>
-            )}
-
-            {user && user.role !== 'Admin' && (
-                <div>
-                    <p>Access denied. You are not authorized to view this page.</p>
+            ) : (
+                <div className="text-red-500 text-center">
+                    <p>{error || "Loading..."}</p>
                 </div>
             )}
         </div>
