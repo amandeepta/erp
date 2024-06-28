@@ -7,6 +7,7 @@ import AddStudents from './components/Admin/AddStudent';
 import InfoFaculty from './components/Admin/InfoFaculty';
 import AddFaculty from './components/Admin/AddFaculty';
 import InfoStudent from './components/Admin/InfoStudent';
+import Attendance from './components/Faculty/Attendance'
 function App() {
   return (
     
@@ -16,16 +17,17 @@ function App() {
           
             <Route path="/admin" element={<Admin />} />
             <Route path = "addStudents" element = {<AddStudents/>} />
-            <Route path ="/Faculty" element = {<InfoFaculty/>} />
+            <Route path ="/infoFaculty" element = {<InfoFaculty/>} />
             <Route path = "addFaculty" element= {<AddFaculty/>} />
-            <Route path = "/Student" element = {<InfoStudent/>} />
+            <Route path = "/infoStudent" element = {<InfoStudent/>} />
+            
+
             <Route path="/student" element={<Student />} />
          
 
           
             <Route path="/faculty" element={<Faculty />} />
-            
-            
+            <Route path = '/attendance' element = {<Attendance/>} />
 
         </Routes>
     

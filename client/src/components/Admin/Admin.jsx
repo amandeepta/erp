@@ -30,11 +30,11 @@ function Admin() {
     };
 
     const handleAddStudents = () => {
-        navigate('/Student');
+        navigate('/infoStudent');
     };
 
     const handleAddFaculty = () => {
-        navigate('/Faculty');
+        navigate('/infoFaculty');
     };
 
     const handleAddAdmin = () => {

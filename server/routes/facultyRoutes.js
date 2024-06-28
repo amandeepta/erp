@@ -3,12 +3,12 @@ const router = express.Router();
 const {auth,isFaculty} = require("../middlewear/auth");
 
 const {
-    login,
     getStudent,
-    markAttendance
+    markAttendance,
+    getinfo
 } = require("../controllers/Faculty");
 
-router.post("/login",login);
-router.get("/getStudent", auth, isFaculty,getStudent);
+router.get("/info", auth, isFaculty, getinfo);
+router.post("/getStudent",auth, isFaculty,getStudent);
 router.post("/markAttendance", auth, isFaculty, markAttendance);
 module.exports = router;

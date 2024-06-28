@@ -18,21 +18,7 @@ const subjectSchema = new mongoose.Schema( {
       year : {
         type : String,
         required : true
-      },
-      attendance: [{
-        subject: {
-            type: ObjectId,
-            ref: 'subject',
-        },
-        totalLectures: {
-            type: Number,
-            default: 0,
-        },
-        lecturesAttended: {
-            type: Number,
-            default: 0,
-        }
-    }]
+      }
     
 })
 

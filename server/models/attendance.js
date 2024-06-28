@@ -1,24 +1,29 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema.Types;
 
-const attendanceSchema = new mongoose.Schema( {
+const studentAttendanceSchema = new mongoose.Schema({
     student: {
         type: ObjectId,
         ref: "student",
-      },
-      subject: {
+        required: true
+    },
+    lecturesAttended: {
+        type: Number,
+        default: 0
+    }
+});
+
+const subjectAttendanceSchema = new mongoose.Schema({
+    subject: {
         type: ObjectId,
         ref: "subject",
-      },
-      totalLectures : {
-        type : Number,
-        default : 0
-      },
-      lecturesAttended : {
-        type : Number, 
-        default : 0,
-      }
-    
-})
+        required: true
+    },
+    totalLectures: {
+        type: Number,
+        default: 0
+    },
+    students: [studentAttendanceSchema]
+});
 
-module.exports = mongoose.model("attendance",attendanceSchema);
+module.exports = mongoose.model("attendance", subjectAttendanceSchema);
