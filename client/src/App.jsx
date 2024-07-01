@@ -7,7 +7,8 @@ import AddStudents from './components/Admin/AddStudent';
 import InfoFaculty from './components/Admin/InfoFaculty';
 import AddFaculty from './components/Admin/AddFaculty';
 import InfoStudent from './components/Admin/InfoStudent';
-import Attendance from './components/Faculty/Attendance'
+import Attendance from './components/Faculty/Attendance';
+import GetAttendance from './components/Student/GetAttendace';
 function App() {
   return (
     
@@ -23,7 +24,7 @@ function App() {
             
 
             <Route path="/student" element={<Student />} />
-         
+            <Route path = "/getAttendance" element = {<GetAttendance/>} />
 
           
             <Route path="/faculty" element={<Faculty />} />

@@ -40,6 +40,7 @@ const studentSchema = new Schema({
             ref: 'subject',
         }
     ]
+    
 });
 
 module.exports = mongoose.model("student", studentSchema);

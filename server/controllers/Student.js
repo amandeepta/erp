@@ -3,6 +3,34 @@ const jwt = require("jsonwebtoken");
 const Student = require("../models/student");
 const Attendance = require("../models/attendance");
 
+exports.getinfo = async (req, res) => {
+  try {
+      const username = req.email;
+      if (!username) {
+          return res.status(400).json({ error: 'Username is required' });
+      }
+      const user = await Student.findOne({ email: username });
+      if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+      }
+      res.status(200).json({
+          success: true,
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          section: user.section,
+          year: user.year,
+          department: user.department,
+          subjects: user.subjects
+      });
+  } catch (error) {
+      console.error('Error fetching user information:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -32,39 +60,43 @@ exports.login = async (req, res) => {
 
 exports.getAttendance = async (req, res) => {
   try {
-    // Assuming the user ID is stored in a cookie named 'userId'
     const accessToken = req.cookies.authToken;
 
-// Decode the JWT token to extract the payload
+    // Decode the JWT token to extract the payload
     const decodedToken = jwt.decode(accessToken);
 
     // Extract the user ID from the decoded token
     const userId = decodedToken ? decodedToken.id : null;
 
-
-    console.log(userId);
-    // Find the student based on the user ID
-    const student = await Student.findById(userId);
-
-    if (!student) {
-      return res.status(404).json({ message: "Student not found" });
+    if (!userId) {
+      return res.status(400).json({ message: "Invalid token" });
     }
 
+    console.log(userId);
+
     // Find attendance records for the student and populate subject details
-    const attendance = await Attendance.find({ student: student._id }).populate("subject");
+    const attendance = await Attendance.find({ "students.student": userId }).populate("subject");
 
     if (!attendance || attendance.length === 0) {
       return res.status(404).json({ message: "Attendance not found" });
     }
 
     // Calculate attendance percentage and format the response
-    const result = attendance.map((att) => ({
-      percentage: ((att.lecturesAttended / att.totalLectures) * 100).toFixed(2),
-      subjectCode: att.subject.subjectCode,
-      subjectName: att.subject.subjectName,
-      attended: att.lecturesAttended,
-      total: att.totalLectures,
-    }));
+    const result = attendance.map(att => {
+      const studentRecord = att.students.find(student => student.student.toString() === userId);
+
+      if (studentRecord) {
+        return {
+          percentage: ((studentRecord.lecturesAttended / att.totalLectures) * 100).toFixed(2),
+          subjectCode: att.subject.subjectCode,
+          subjectName: att.subject.name, // Use the populated subject name
+          attended: studentRecord.lecturesAttended,
+          total: att.totalLectures,
+        };
+      } else {
+        return null;
+      }
+    }).filter(record => record !== null);
 
     res.status(200).json({ result });
   } catch (error) {

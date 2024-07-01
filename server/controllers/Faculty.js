@@ -3,6 +3,7 @@ const Student = require("../models/student");
 const Teacher = require("../models/faculty");
 const Subject = require("../models/subject");
 const Attendance = require("../models/attendance");
+const student = require("../models/student");
 
 exports.getinfo = async (req, res) => {
     try {
@@ -66,28 +67,22 @@ exports.getStudent = async (req, res) => {
     try {
         const { selectedStudents, subjectCode, department, year, section } = req.body;
 
-        // Find or create the subject based on subjectCode
         let subject = await Subject.findOne({ subjectCode });
         if (!subject) {
-            // Create a new subject if it doesn't exist
             subject = new Subject({ subjectCode });
             await subject.save();
         }
 
-        // Find or create the attendance record for the subject
         let attendanceRecord = await Attendance.findOne({ subject: subject._id });
         if (!attendanceRecord) {
-            // Create attendance record for the new subject
             attendanceRecord = new Attendance({
                 subject: subject._id,
                 totalLectures: 0,
                 students: []
             });
 
-            // Fetch all students for the department, year, and section
             const allStudents = await Student.find({ department, year, section });
 
-            // Initialize attendance records for all students
             allStudents.forEach(student => {
                 attendanceRecord.students.push({
                     student: student._id,
@@ -98,18 +93,20 @@ exports.getStudent = async (req, res) => {
             await attendanceRecord.save();
         }
 
-        // Increment the total lectures for the subject
         attendanceRecord.totalLectures += 1;
 
-        // Update attendance for selected students
         selectedStudents.forEach(studentId => {
             const studentRecord = attendanceRecord.students.find(student => student.student.toString() === studentId);
             if (studentRecord) {
                 studentRecord.lecturesAttended += 1;
+            } else {
+                attendanceRecord.students.push({
+                    student: studentId,
+                    lecturesAttended: 1
+                });
             }
         });
 
-        // Save the updated attendance record
         await attendanceRecord.save();
 
         res.status(200).json({ message: "Attendance marked successfully" });

@@ -93,56 +93,63 @@ function Attendance() {
 
     return (
         <div className="max-w-2xl mx-auto p-4">
-            <div>
-                <label className="block text-gray-700 font-bold mb-2">
-                    Year:
-                    <input
-                        type="text"
-                        value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    />
-                </label>
-            </div>
-            <div>
-                <label className="block text-gray-700 font-bold mb-2">
-                    Section:
-                    <input
-                        type="text"
-                        value={section}
-                        onChange={(e) => setSection(e.target.value)}
-                        className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    />
-                </label>
-            </div>
-            <button
-                onClick={handleFetchStudents}
-                className="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 mb-4"
-            >
-                Fetch Students
-            </button>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <ul className="space-y-2">
-                    {students.map((student) => (
-                        <li key={student._id} className="flex items-center">
-                            <input
-                                type="checkbox"
-                                checked={selectedStudents.includes(student._id.toString())}
-                                onChange={() => handleCheckboxChange(student._id.toString())}
-                                className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                            />
-                            <label className="ml-2 text-gray-700">{student.name}</label>
-                        </li>
-                    ))}
-                </ul>
+            <div className="bg-white shadow-lg rounded-lg p-6 mb-4">
+                <h2 className="text-3xl font-bold text-gray-800 mb-6">Mark Attendance</h2>
+                <div className="mb-4">
+                    <label className="block text-gray-700 font-bold mb-2">
+                        Year:
+                        <input
+                            type="text"
+                            value={year}
+                            onChange={(e) => setYear(e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        />
+                    </label>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 font-bold mb-2">
+                        Section:
+                        <input
+                            type="text"
+                            value={section}
+                            onChange={(e) => setSection(e.target.value)}
+                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                        />
+                    </label>
+                </div>
                 <button
-                    type="submit"
-                    disabled={!studentsFetched || selectedStudents.length === 0}
-                    className="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                    onClick={handleFetchStudents}
+                    className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 mb-4"
                 >
-                    Submit Attendance
+                    Fetch Students
                 </button>
-            </form>
+                {studentsFetched && (
+                    <div className="bg-gray-50 shadow-md rounded-lg p-4">
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <ul className="space-y-2">
+                                {students.map((student) => (
+                                    <li key={student._id} className="flex items-center p-2 bg-white rounded-md shadow-sm border border-gray-200">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedStudents.includes(student._id.toString())}
+                                            onChange={() => handleCheckboxChange(student._id.toString())}
+                                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                        />
+                                        <label className="ml-2 text-gray-700">{student.name}</label>
+                                    </li>
+                                ))}
+                            </ul>
+                            <button
+                                type="submit"
+                                disabled={!studentsFetched || selectedStudents.length === 0}
+                                className="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                            >
+                                Submit Attendance
+                            </button>
+                        </form>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
