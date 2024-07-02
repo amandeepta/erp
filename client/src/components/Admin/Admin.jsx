@@ -47,43 +47,42 @@ function Admin() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-r from-purple-300 to-blue-200 flex flex-col items-center justify-center p-4">
             {user && user.role === "Admin" ? (
-                <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-                    <h1 className="text-2xl font-bold text-center mb-4">Welcome to the Admin Dashboard</h1>
-                    <div className="mb-4">
-                        <p className="text-gray-700"><strong>User ID:</strong> {user.id}</p>
-                        <p className="text-gray-700"><strong>User Name:</strong> {user.name}</p>
-                        {/* Render more user data fields as needed */}
+                <div className="bg-white shadow-lg rounded-3xl p-8 w-full max-w-md">
+                    <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Admin Dashboard</h1>
+                    <div className="mb-6 text-center">
+                        <p className="text-gray-600"><strong>User ID:</strong> {user.id}</p>
+                        <p className="text-gray-600"><strong>User Name:</strong> {user.name}</p>
                     </div>
-                    <div className="grid grid-cols-1 gap-4 mb-4">
+                    <div className="grid grid-cols-1 gap-6 mb-6">
                         <button
-                            className="flex items-center justify-center bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                            className="flex items-center justify-center bg-indigo-500 text-white py-3 px-5 rounded-full hover:bg-indigo-600 transition duration-300"
                             onClick={handleCreateNotice}
                         >
                             <FaPlus className="mr-2" /> Create Notice
                         </button>
                         <button
-                            className="flex items-center justify-center bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+                            className="flex items-center justify-center bg-teal-500 text-white py-3 px-5 rounded-full hover:bg-teal-600 transition duration-300"
                             onClick={handleAddStudents}
                         >
-                            <FaUserGraduate className="mr-2" /> Add Students
+                            <FaUserGraduate className="mr-2" /> Students
                         </button>
                         <button
-                            className="flex items-center justify-center bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+                            className="flex items-center justify-center bg-orange-500 text-white py-3 px-5 rounded-full hover:bg-orange-600 transition duration-300"
                             onClick={handleAddFaculty}
                         >
-                            <FaUserTie className="mr-2" /> Add Faculty
+                            <FaUserTie className="mr-2" /> Faculty
                         </button>
                         <button
-                            className="flex items-center justify-center bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600"
+                            className="flex items-center justify-center bg-pink-500 text-white py-3 px-5 rounded-full hover:bg-pink-600 transition duration-300"
                             onClick={handleAddAdmin}
                         >
-                            <FaUser className="mr-2" /> Add Admin
+                            <FaUser className="mr-2" /> Admin
                         </button>
                     </div>
                     <button
-                        className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+                        className="w-full bg-red-500 text-white py-3 px-5 rounded-full hover:bg-red-600 transition duration-300"
                         onClick={handleLogout}
                     >
                         Log Out
